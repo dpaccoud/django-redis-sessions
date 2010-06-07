@@ -1,5 +1,5 @@
 from django.contrib.sessions.backends.base import SessionBase, CreateError
-from redis_models import database as db
+from redis_sessions import database as db
 
 
 class SessionStore(SessionBase):
