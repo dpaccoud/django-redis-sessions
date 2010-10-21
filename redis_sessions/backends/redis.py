@@ -20,6 +20,7 @@ class SessionStore(SessionBase):
             except CreateError:
                 # The key wasn't unique, try again
                 continue
+            self.modified = True
             return
 
     def save(self, must_create=False):
@@ -35,7 +36,6 @@ class SessionStore(SessionBase):
             raise CreateError
         # The key has been set, set its expiration
         db.expire(key, self.get_expiry_age())
-        self.modified = False
 
     def delete(self, session_key=None):
         if session_key is None:
