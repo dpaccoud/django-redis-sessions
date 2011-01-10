@@ -1,6 +1,8 @@
+from django.conf import settings
 from django.contrib.sessions.backends.base import SessionBase, CreateError
 from redis_sessions import database as db
 
+SESSION_KEY = getattr(settings,'REDIS_SESSION_KEY','session:%(session_key)s')
 
 class SessionStore(SessionBase):
     """
@@ -8,7 +10,7 @@ class SessionStore(SessionBase):
     """
 
     def exists(self, session_key):
-        if db.exists("session:%s" % session_key):
+        if db.exists(SESSION_KEY % dict(session_key = session_key)):
             return True
         return False
 
@@ -28,7 +30,7 @@ class SessionStore(SessionBase):
             func = db.setnx
         else:
             func = db.set
-        key = "session:%s" % self.session_key
+        key = SESSION_KEY % dict(session_key = self.session_key)
         result = func(
                 key,
                 self.encode(self._get_session(no_load=must_create)))
@@ -40,10 +42,10 @@ class SessionStore(SessionBase):
     def delete(self, session_key=None):
         if session_key is None:
             session_key = self.session_key
-        db.delete("session:%s" % session_key)
+        db.delete(SESSION_KEY % dict(session_key = session_key))
 
     def load(self):
-        session_data = db.get("session:%s" % self.session_key)
+        session_data = db.get(SESSION_KEY % dict(session_key = self.session_key))
         if session_data is None:
             self.create()
             return {}
