@@ -4,3 +4,4 @@ The primary author of django-redis-sessions is David Paccoud
 Others who have contributed to the application:
 
 * Dmitry Chaplinsky
+* Alen Mujezinovic
